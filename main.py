@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from enum import Enum
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -8,6 +9,11 @@ class ModelName(str, Enum):
     resnet = "resnet"
     lenet = "lenet"
 
+class Item(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
 
 @app.get("/")
 async def root():
@@ -27,4 +33,12 @@ async def enum_reader(wrd : ModelName):
         return "correct"
     else:
         return "wrong"
+    
+@app.get("/query_check/")
+async def query_check(alpha:str, numeric : int):
+    return {"result": alpha + "-" + str(numeric)} 
+
+@app.post("/body_check")
+async def body_check(item: Item):
+    return item
         
